@@ -1,118 +1,264 @@
-
 package com.mycompany.proyecto1;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
-
-public class agendatelefonica {
+public class Agenda {
     
-    public static void main(String [] args) throws IOException
-    {
-        Scanner sn = new Scanner(System.in);
-        sn.useDelimiter("\n");
-        boolean salir = false;
-        int opcion; 
+    private Contacto[] contactos;
+    
+    public Agenda(){
+        this.contactos = new Contacto[20];
+    }
+    
+    public Agenda(int tamaño){
+        tamaño=15;
+        this.contactos = new Contacto[tamaño];
+    }
+    
+    public void añadirContacto(Contacto c){ 
         
-        Agenda agendaTelefonica = new Agenda(10);
-        String nombre = null;
-        double telefono;
-        String correo = null;
-        Contacto c;
-
+        if(this.existeContacto(c)){
+            System.out.println("El contacto con ese nombre ya existe");
+        }
+        else if(agendaLlena()){
+           System.out.println("La agenda esta llena, no se pueden meter mas contactos");
+        } 
         
-        while (!salir)
+             else{
+            if (this.existeTelefono(c)){
+                System.out.println("El contacto con este telefono ya existe");
+            }
+            else {
+             boolean encontrado = false;  
+             for(int i=0;i<contactos.length && !encontrado;i++){
+                if(contactos[i]==null){
+                    contactos[i]=c;
+                    encontrado=true;
+                }
+             }
+   
+            if(encontrado){
+                System.out.println("Se ha añadido");
+            }else{
+                System.out.println("No se ha podido añadir");
+            }
+        }
+     }
+   }
+   
+   public boolean existeContacto(Contacto c){
+       
+       
+        for(int i=0;i<contactos.length;i++){
+            if(contactos[i]!=null && c.equals(contactos[i])){
+                return true;
+            }
+        }
+        return false;
+        
+   }
+   public boolean existeTelefono(Contacto c){
+       
+       
+        for(int i=0;i<contactos.length;i++){
+            if(contactos[i]!=null && c.equalst(contactos[i])){
+                return true;
+            }
+        }
+        return false;
+        
+   }
+   
+   public void listarContactos(){
+        
+       int contador = 0;
+        for(int i=0;i<contactos.length;i++){
+            if(contactos[i]!=null){
+                System.out.println(contactos[i]);  
+            }
+            if(contactos[i]==null) {
+               contador++;
+            }
+            
+        }
+        
+        if(contador==contactos.length)
         {
-            System.out.println("1. Agregar contacto");
-            System.out.println("2. Listar contactos");
-            System.out.println("3. Exportar contacto");
-            System.out.println("4. Importar contacto");
-            System.out.println("5. Buscar contacto");
-            System.out.println("6. Eliminar contacto");
-            System.out.println("7. Contactos disponibles");
-            System.out.println("8. Modificar Contacto");
-            System.out.println("9. Salir");
-            try
-            {
+            System.out.println("No hay contactos");
+        }
+   }
+   public void modificarContacto(String nombre){
+       
+       Scanner sn = new Scanner(System.in);
+       sn.useDelimiter("\n");
+       boolean encontrado = false;
+       int opcion;
+        double telefono;
+        String correo;
+        Contacto c;
+       boolean salir = false;
+       for(int i=0;i<contactos.length && !encontrado;i++){
+           if(contactos[i]!=null && contactos[i].getNombre().equalsIgnoreCase(nombre)){
+              System.out.println("Su teléfono es: " + contactos[i].getTelefono());
+              System.out.println("Su correo es: " + contactos[i].getCorreo());
+               System.out.println("Ingresa lo que deseas modificar de este contacto: ");
+               while (!salir){
+               System.out.println("1- Nombre");
+               System.out.println("2- Telefono");
+               System.out.println("3- Correo");
+               System.out.println("4- Salir");
+                encontrado = true;
+                   try
+                    {
                 System.out.println("Escribe una de las opciones");
                 opcion = sn.nextInt();
                     
                 switch(opcion)
                 {
-                    case 1:
-                        if(agendaTelefonica.agendaLlena())
-                        {
-                         System.out.println("La agenda esta llena");
-                         break;
-                        }
-                        else{
-                        System.out.println("Escribe un nombre: ");
+                    case 1: 
+                        System.out.println("Escribe un nombre nuevo: ");
                         nombre = sn.next();
-                        
-                        System.out.println("Escribe un telefono");
+                         c = new Contacto(nombre);
+                        break;
+                      
+                    case 2:
+                        System.out.println("Escribe un telefono nuevo");
                         telefono = sn.nextInt();
+                        break;
                         
-                        System.out.println("Escribe un correo");
+                    case 3: 
+                        System.out.println("Escribe un correo nuevo");
                         correo = sn.next();
-                        
-                        c = new Contacto(nombre, correo, (int) telefono);
-                        
-                        agendaTelefonica.añadirContacto(c);
-                        }
+                        c = new Contacto(correo);
                         break;
-                    case 2:   
-                        agendaTelefonica.listarContactos();
-                        break;
-                    case 3:  
-                        System.out.println("Escribe el nombre del contacto que deseas archivar");
-                        nombre = sn.next();
-                        agendaTelefonica.CrearArchivo(nombre);
-                        break;
-                        
                     case 4:
-                       agendaTelefonica.ImportarArchivo(nombre);
-                       break;
-                    case 5:
-                        System.out.println("Escribe un nombre");
-                        nombre = sn.next();
-                        agendaTelefonica.buscarPorNombre(nombre);
-                        break;
-                
-                    case 6: 
-                        System.out.println("Escribe un nombre");
-                        nombre = sn.next();
-                 
-                        c = new Contacto(nombre, correo, 0);
-                        agendaTelefonica.eliminarContacto(c);
-                        
-                        break;
-                    case 7:
-                        System.out.println("Hay "+agendaTelefonica.huecosLibre()+" contactos libres");
-                        break;
-                    case 8:
-                        System.out.println("Escribe el nombre del contacto que deseas modificar: ");
-                        nombre = sn.next();
-                       
-                        agendaTelefonica.modificarContacto(nombre);
-                        break;
-                    case 9: 
                         salir = true;
                         break;
-                    default: 
-                        System.out.println("Solo números entre 1 y 9");  
                 }
-                
-                
-            }catch(InputMismatchException e)
-            {
+              }catch (InputMismatchException e) {
                 System.out.println("Tienes que insertar un número");
                 sn.next();
                 sn.next();
-            }
-    
+              }
+           }
+         }
+       }
+   }
+   public void buscarPorNombre(String nombre){
+       boolean encontrado = false;
+       for(int i=0;i<contactos.length && !encontrado;i++){
+           if(contactos[i]!=null && contactos[i].getNombre().equalsIgnoreCase(nombre)){
+              System.out.println("Su teléfono es: " + contactos[i].getTelefono());
+              System.out.println("Su correo es: " + contactos[i].getCorreo());
+              
+              encontrado = true;
+           }
+       }
+       
+        
+       if(!encontrado){
+           System.out.println("No se ha encontrado el contacto");
+       }
+       
+   }
+   public void CrearArchivo (String nombre) throws IOException{
+       File f;
+       FileWriter w;
+       BufferedWriter bw;
+       PrintWriter wr;
+       
+       try{
+           f= new File(nombre);
+           w= new FileWriter(f);
+           bw= new BufferedWriter(w);
+           wr= new PrintWriter(bw);
+           boolean encontrado = false;
+           for(int i=0;i<contactos.length && !encontrado;i++){
+           if(contactos[i]!=null && contactos[i].getNombre().equalsIgnoreCase(nombre)){
+              wr.write("Nombre: " + contactos[i].getNombre());
+              wr.write(" ; ");
+              wr.write("Telefono: " + contactos[i].getTelefono());
+              wr.write(" ; ");
+              wr.write("Correo: " + contactos[i].getCorreo());
+              encontrado = true;
+               System.out.println("Se ha creado el archivo");
+           }
+       }
+           wr.close();
+           bw.close();
         }
-    
-    }
+       catch (Exception e){
+        JOptionPane.showMessageDialog(null, "Ha ocurrido un error"+ e);
+                  
+       }
+           
+   }
+   public String ImportarArchivo (String name) throws FileNotFoundException {
+       String texto = "";
+       try {
+           BufferedReader bf = new BufferedReader (new FileReader(name));
+           String temp = "";
+           String bfRead;
+           while ((bfRead = bf.readLine()) !=null ){
+                   temp = temp + bfRead;
+           }
+           texto = temp;
+       }catch (Exception e){System.err.println("No se encontro el archivo");}
+    return texto;
+}
+public static void main (String[] args) throws FileNotFoundException{
+          Agenda m= new Agenda();
+          m.ImportarArchivo("C:\\Users\\User\\Documents\\NetBeansProjects\\Proyecto\\holamundo.txt");
+                        
+                        }
+   public boolean agendaLlena(){
+       
+       for (int i = 0; i < contactos.length; i++){
+           if(contactos[i] == null){
+               return false;
+           }
+       }
+       
+       return true;
+       
+   }
+   
+   public void eliminarContacto(Contacto c){
+       
+       boolean encontrado = false;
+       for(int i=0;i<contactos.length && !encontrado;i++){
+           if(contactos[i]!=null && contactos[i].equals(c)){
+              contactos[i]=null;
+              System.out.println("Contacto eliminado");
+              encontrado = true;
+           }
+       }
+       
+       if(!encontrado){
+           System.out.println("No se ha eliminado el contacto");      
+       }
+   }
+   
+   public int huecosLibre(){
+       int contador = 0;
+       for(int i=0;i<contactos.length;i++){
+           if(contactos[i]==null){
+              contador++;
+           }
+       }
+       
+       return contador;
+   }
+   
 }
 
