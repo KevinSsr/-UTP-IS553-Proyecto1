@@ -27,7 +27,7 @@ public class Agenda {
     
     public void añadirContacto(Contacto c){ 
         
-        if(this.existeContacto(c)){
+        if(this.verificarContacto(c)){
             System.out.println("El contacto con ese nombre ya existe");
         }
         else if(agendaLlena()){
@@ -35,7 +35,7 @@ public class Agenda {
         } 
         
              else{
-            if (this.existeTelefono(c)){
+            if (this.verificarTelefono(c)){
                 System.out.println("El contacto con este telefono ya existe");
             }
             else {
@@ -56,7 +56,7 @@ public class Agenda {
      }
    }
    
-   public boolean existeContacto(Contacto c){
+   public boolean verificarContacto(Contacto c){
        
        
         for(int i=0;i<contactos.length;i++){
@@ -67,7 +67,7 @@ public class Agenda {
         return false;
         
    }
-   public boolean existeTelefono(Contacto c){
+   public boolean verificarTelefono(Contacto c){
        
        
         for(int i=0;i<contactos.length;i++){
@@ -97,70 +97,59 @@ public class Agenda {
             System.out.println("No hay contactos");
         }
    }
-   public void modificarContacto(String nombre){
+   public void modificarContacto(Contacto c){
        
        Scanner sn = new Scanner(System.in);
        sn.useDelimiter("\n");
        boolean encontrado = false;
-       int opcion;
-        double telefono;
-        String correo;
-        Contacto c;
-       boolean salir = false;
+       double telefono;
+       String nombre;
+       String correo;
+       String lugar; 
        for(int i=0;i<contactos.length && !encontrado;i++){
-           if(contactos[i]!=null && contactos[i].getNombre().equalsIgnoreCase(nombre)){
+           if(contactos[i]!=null && contactos[i].equals(c)){
               System.out.println("Su teléfono es: " + contactos[i].getTelefono());
               System.out.println("Su correo es: " + contactos[i].getCorreo());
+              System.out.println("El lugar es: " + contactos[i].getLugar());
                System.out.println("Ingresa lo que deseas modificar de este contacto: ");
-               while (!salir){
-               System.out.println("1- Nombre");
-               System.out.println("2- Telefono");
-               System.out.println("3- Correo");
-               System.out.println("4- Salir");
                 encontrado = true;
+                 }
                    try
                     {
-                System.out.println("Escribe una de las opciones");
-                opcion = sn.nextInt();
-                    
-                switch(opcion)
-                {
-                    case 1: 
-                        System.out.println("Escribe un nombre nuevo: ");
+                       System.out.println("Escribe un nombre nuevo: ");
+                        contactos[i]=null;
                         nombre = sn.next();
-                         c = new Contacto(nombre);
-                        break;
-                      
-                    case 2:
                         System.out.println("Escribe un telefono nuevo");
                         telefono = sn.nextInt();
-                        break;
-                        
-                    case 3: 
                         System.out.println("Escribe un correo nuevo");
                         correo = sn.next();
-                        c = new Contacto(correo);
-                        break;
-                    case 4:
-                        salir = true;
-                        break;
-                }
+                        System.out.println("Escribe un lugar nuevo");
+                        lugar =sn.next();
+                        while(lugar.trim().isEmpty()){
+                            System.out.println("El lugar es obligatorio");
+                            lugar =sn.next();
+                            c = new Contacto(nombre, correo, (int) telefono, lugar);
+                            this.añadirContacto(c);
+                            
+             }
+               break;
+                        
               }catch (InputMismatchException e) {
                 System.out.println("Tienes que insertar un número");
                 sn.next();
                 sn.next();
               }
            }
-         }
+         
        }
-   }
+   
    public void buscarPorNombre(String nombre){
        boolean encontrado = false;
        for(int i=0;i<contactos.length && !encontrado;i++){
            if(contactos[i]!=null && contactos[i].getNombre().equalsIgnoreCase(nombre)){
               System.out.println("Su teléfono es: " + contactos[i].getTelefono());
               System.out.println("Su correo es: " + contactos[i].getCorreo());
-              
+              System.out.println("El lugar es: " + contactos[i].getLugar());
               encontrado = true;
            }
        }
@@ -183,6 +172,7 @@ public class Agenda {
            bw= new BufferedWriter(w);
            wr= new PrintWriter(bw);
            boolean encontrado = false;
+           
            for(int i=0;i<contactos.length && !encontrado;i++){
            if(contactos[i]!=null && contactos[i].getNombre().equalsIgnoreCase(nombre)){
               wr.write("Nombre: " + contactos[i].getNombre());
@@ -190,6 +180,8 @@ public class Agenda {
               wr.write("Telefono: " + contactos[i].getTelefono());
               wr.write(" ; ");
               wr.write("Correo: " + contactos[i].getCorreo());
+              wr.write(" ; ");
+              wr.write("Lugar: " + contactos[i].getLugar());
               encontrado = true;
                System.out.println("Se ha creado el archivo");
            }
@@ -197,30 +189,34 @@ public class Agenda {
            wr.close();
            bw.close();
         }
-       catch (Exception e){
+       catch (IOException e){
         JOptionPane.showMessageDialog(null, "Ha ocurrido un error"+ e);
                   
        }
            
    }
-   public String ImportarArchivo (String name) throws FileNotFoundException {
-       String texto = "";
+   public void ImportarArchivo (String nombre) throws FileNotFoundException {
+       File archivo;
+       FileReader fr;
+       BufferedReader br;
+       
        try {
-           BufferedReader bf = new BufferedReader (new FileReader(name));
-           String temp = "";
-           String bfRead;
-           while ((bfRead = bf.readLine()) !=null ){
-                   temp = temp + bfRead;
-           }
-           texto = temp;
-       }catch (Exception e){System.err.println("No se encontro el archivo");}
-    return texto;
-}
-public static void main (String[] args) throws FileNotFoundException{
-          Agenda m= new Agenda();
-          m.ImportarArchivo("C:\\Users\\User\\Documents\\NetBeansProjects\\Proyecto\\holamundo.txt");
-                        
-                        }
+           archivo = new File (nombre);
+           fr=new FileReader(archivo);
+           br= new BufferedReader (fr);
+           
+           String linea;
+           while((linea=br.readLine())!=null){
+               System.out.println(linea);
+               System.out.println("El contacto se ha importado");      
+          }  
+           br.close();
+           fr.close();
+       } catch (IOException e) {
+           JOptionPane.showMessageDialog(null, "Hubo un error leyendo el archivo"+e);
+       }
+       
+    }
    public boolean agendaLlena(){
        
        for (int i = 0; i < contactos.length; i++){
@@ -259,6 +255,4 @@ public static void main (String[] args) throws FileNotFoundException{
        
        return contador;
    }
-   
 }
-
