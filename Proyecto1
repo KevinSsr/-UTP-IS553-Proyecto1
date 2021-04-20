@@ -5,16 +5,21 @@ public class Contacto {
     private String nombre;
     private int telefono;
     private String correo;
+    private String lugar;
 
-    public Contacto(String nombre, String correo, int telefono) {
+    public Contacto(String nombre, String correo, int telefono, String lugar) {
         this.nombre = nombre;
         this.telefono = telefono;
         this.correo = correo;
+        this.lugar = lugar;
     }
-
-    Contacto(String nombre, int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean isBlank(){
+        
+        return false;
+        
     }
+        
+    
 
     public String getNombre() {
         return nombre;
@@ -39,6 +44,14 @@ public class Contacto {
         this.correo = correo;
     }
 
+    public String getLugar() {
+        return lugar;
+    }
+
+    public void setLugar(String lugar) {
+        this.lugar = lugar;
+    }
+
     
     public boolean equals(Contacto c){
     
@@ -58,7 +71,8 @@ public class Contacto {
     
     @Override
     public String toString() {
-        return "nombre=" + nombre + ", telefono=" + telefono + ", correo=" + correo;
+        return "nombre=" + nombre + ", telefono=" + telefono + ", correo=" + correo + ", lugar=" + lugar;
     }
 }
+
 
