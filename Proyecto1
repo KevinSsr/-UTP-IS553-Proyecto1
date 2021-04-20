@@ -1,4 +1,3 @@
-
 package com.mycompany.proyecto1;
 
 import java.io.IOException;
@@ -17,8 +16,9 @@ public class agendatelefonica {
         
         Agenda agendaTelefonica = new Agenda(10);
         String nombre = null;
-        double telefono;
+        double telefono = 0;
         String correo = null;
+        String lugar = null;
         Contacto c;
 
         
@@ -47,20 +47,31 @@ public class agendatelefonica {
                          break;
                         }
                         else{
+                        
                         System.out.println("Escribe un nombre: ");
                         nombre = sn.next();
-                        
+                        while (nombre.isEmpty()){
+                            System.out.println("El nombre es obligatorio");
+                            nombre = sn.next();
+                        }
                         System.out.println("Escribe un telefono");
                         telefono = sn.nextInt();
-                        
+
                         System.out.println("Escribe un correo");
                         correo = sn.next();
                         
-                        c = new Contacto(nombre, correo, (int) telefono);
+                        System.out.println("Escribe el lugar donde lo conociste");
+                        lugar = sn.next();
+                        while(lugar.isEmpty()){
+                            System.out.println("El lugar es obligatorio");
+                            lugar =sn.next();
+                       
+                        }
+                         c = new Contacto(nombre, correo, (int) telefono, lugar);
                         
                         agendaTelefonica.añadirContacto(c);
-                        }
-                        break;
+                      }                         
+                      break;
                     case 2:   
                         agendaTelefonica.listarContactos();
                         break;
@@ -71,7 +82,9 @@ public class agendatelefonica {
                         break;
                         
                     case 4:
-                       agendaTelefonica.ImportarArchivo(nombre);
+                        System.out.println("Ingresa el nombre del archivo que deseas importar");
+                        nombre = sn.next();
+                        agendaTelefonica.ImportarArchivo("C:\\Users\\User\\Documents\\NetBeansProjects\\Proyecto\\"+ nombre + ".txt");
                        break;
                     case 5:
                         System.out.println("Escribe un nombre");
@@ -83,7 +96,7 @@ public class agendatelefonica {
                         System.out.println("Escribe un nombre");
                         nombre = sn.next();
                  
-                        c = new Contacto(nombre, correo, 0);
+                        c = new Contacto(nombre, correo, 0, lugar);
                         agendaTelefonica.eliminarContacto(c);
                         
                         break;
@@ -93,8 +106,8 @@ public class agendatelefonica {
                     case 8:
                         System.out.println("Escribe el nombre del contacto que deseas modificar: ");
                         nombre = sn.next();
-                       
-                        agendaTelefonica.modificarContacto(nombre);
+                        c = new Contacto(nombre, correo, 0, lugar);
+                        agendaTelefonica.modificarContacto(c);
                         break;
                     case 9: 
                         salir = true;
@@ -115,4 +128,3 @@ public class agendatelefonica {
     
     }
 }
-
